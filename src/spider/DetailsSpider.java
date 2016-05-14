@@ -30,6 +30,7 @@ public class DetailsSpider {
 	}
 
 	public DetailsSpider() {
+		System.out.println("拉勾爬虫开始工作");
 		// 获取需要补充详细信息的职位
 		getPositionIds();
 		// 保存详细信息
@@ -62,6 +63,10 @@ public class DetailsSpider {
 		for (int i = 0; i < 10; i++) {
 			executorService.execute(runnable);
 		}
+		executorService.shutdown();
+		while (!executorService.isTerminated()) {  
+		}  
+		System.out.println("拉勾爬虫工作结束");  
 	}
 
 	private void getPositionIds() {

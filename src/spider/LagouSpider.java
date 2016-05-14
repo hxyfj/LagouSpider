@@ -25,6 +25,10 @@ import util.HttpUtil;
  * 抓取搜索列表中的职位信息
  */
 public class LagouSpider {
+	
+	private String city = "杭州";
+	
+	private String keyword = "Java";
 
 	private BlockingQueue<Position> positionsQueue = new LinkedBlockingQueue<>();;
 
@@ -38,6 +42,7 @@ public class LagouSpider {
 	}
 
 	public LagouSpider() {
+		System.out.println("拉勾爬虫开始工作");
 		// 不断从队列中读取职位信息保存到数据库当中
 		savePositions();
 		// 抓取职位信息保存到队列当中
@@ -78,19 +83,22 @@ public class LagouSpider {
 		for (int i = 0; i < 10; i++) {
 			executorService.execute(runnable);
 		}
+		while (!executorService.isTerminated()) {  
+		}  
+		System.out.println("拉勾爬虫工作结束");  
 	}
 
 	private void getPositions() {
 		Map<String, String> params = new HashMap<>();
 		params.put("first", "true");
-		params.put("kd", "java");
+		params.put("kd", keyword);
 		// 页码
 		int pn = 1;
 		// 当前页含有的职位数目
 		int pageSize = 0;
 		do {
 			params.put("pn", "" + pn++);
-			String data = HttpUtil.post("http://www.lagou.com/jobs/positionAjax.json?px=default&city=杭州", params);
+			String data = HttpUtil.post("http://www.lagou.com/jobs/positionAjax.json?px=default&city=" + city, params);
 			// 数据解析
 			Gson gson = new Gson();
 			JsonResult jsonResult = gson.fromJson(data, JsonResult.class);
