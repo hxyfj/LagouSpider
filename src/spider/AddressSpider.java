@@ -1,7 +1,13 @@
 package spider;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -22,6 +28,8 @@ public class AddressSpider {
 	private String city = "杭州";
 
 	private String keyword = "Java";
+
+	private HashMap<String, Integer> map = new HashMap<>();
 
 	public static void main(String[] args) {
 		// 创建爬虫
@@ -44,7 +52,7 @@ public class AddressSpider {
 		Elements links = doc.select("li.detail-district-area > a");
 		for (Element link : links) {
 			String district = link.text();
-			int count = getCount(district,"");
+			int count = getCount(district, "");
 			// 只显示有职位的地区
 			if (count != 0) {
 				System.out.println(district + ":" + count);
@@ -52,7 +60,29 @@ public class AddressSpider {
 				getBizArea(district);
 			}
 		}
+		// 获取排序后的商区信息
+		getAreaAfterSort();
 		System.out.println("---------------------------------------------------------");
+	}
+
+	private void getAreaAfterSort() {
+		System.out.println("按职位数量排序后的商区信息");
+		List<Map.Entry<String, Integer>> list = new ArrayList<Map.Entry<String, Integer>>(map.entrySet());
+		Collections.sort(list, new Comparator<Entry<String, Integer>>() {
+		   public int compare(Entry obj1, Entry obj2) {//从高往低排序
+		       
+		       if(Integer.parseInt(obj1.getValue().toString())<Integer.parseInt(obj2.getValue().toString()))
+		           return 1;
+		       if(Integer.parseInt(obj1.getValue().toString())==Integer.parseInt(obj2.getValue().toString()))
+		           return 0;
+		       else
+		          return -1;
+		   }
+		});
+		for(Iterator<Map.Entry<String, Integer>> ite = list.iterator(); ite.hasNext();) {
+		     Map.Entry<String, Integer> map = ite.next();
+		    System.out.println(map.getKey() + ":" + map.getValue());
+		}
 	}
 
 	private void getBizArea(String district) {
@@ -66,6 +96,7 @@ public class AddressSpider {
 			// 只显示有职位的地区
 			if (count != 0) {
 				System.out.println("   " + bizArea + ":" + count);
+				map.put(bizArea, count);
 			}
 		}
 		System.out.println("---------------------------------------------------------");
@@ -77,10 +108,8 @@ public class AddressSpider {
 		params.put("pn", "1");
 		params.put("kd", keyword);
 
-		String data = HttpUtil.post(
-				"http://www.lagou.com/jobs/positionAjax.json?"
-				+ "px=default&city=" + city + "&district=" + district + "&bizArea=" + bizArea + "&needAddtionalResult=false",
-				params);
+		String data = HttpUtil.post("http://www.lagou.com/jobs/positionAjax.json?" + "px=default&city=" + city + "&district=" + district + "&bizArea=" + bizArea
+				+ "&needAddtionalResult=false", params);
 		// 数据解析
 		Gson gson = new Gson();
 		JsonResult jsonResult = gson.fromJson(data, JsonResult.class);
