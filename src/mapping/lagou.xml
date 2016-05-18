@@ -11,8 +11,8 @@
 
 	<insert id="addPosition" parameterType="Position">
 		insert into
-		lagou.position(positionId,positionName,positionAdvantage,city,companyId,education,jobNature,salary,workYear)
-		values(#{positionId},#{positionName},#{positionAdvantage},#{city},#{companyId},#{education},#{jobNature},#{salary},#{workYear})
+		lagou.position(positionId,positionName,positionType,positionAdvantage,city,district,companyId,education,jobNature,salary,workYear)
+		values(#{positionId},#{positionName},#{positionType},#{positionAdvantage},#{city},#{district},#{companyId},#{education},#{jobNature},#{salary},#{workYear})
 	</insert>
 
 	<resultMap type="Integer" id="resultListId">
@@ -30,11 +30,22 @@
 		positionDescription=#{1} ,
 		positionAddress = #{2} where positionId=#{0}
 	</update>
-	
-	<delete id="deletePosition"  parameterType="int">
+
+	<delete id="deletePosition" parameterType="int">
 		delete from position
 		where
 		positionId = #{positionId}
 	</delete>
+
+	<select id="getCompany" parameterType="int" resultType="Company">
+		select *
+		from company where companyId = #{companyId}
+	</select>
+	
+	<insert id="addCompany" parameterType="Company">
+		insert into
+		company(companyId,companyName,companyFeatures,companyLabels,financeStage,industryField)
+		values(#{companyId},#{companyName},#{companyFeatures},#{companyLabels},,#{financeStage},#{industryField})
+	</insert>
 
 </mapper>

@@ -42,7 +42,9 @@ public class PositionSpider {
 
 	public static void main(String[] args) {
 		// 创建爬虫
-		new PositionSpider("杭州", "Java");
+		// 参数为空就是不限的意思
+		new PositionSpider("", "");
+//		new PositionSpider("杭州", "Java");
 	}
 
 	public PositionSpider(String city, String keyword) {
@@ -76,20 +78,21 @@ public class PositionSpider {
 						}
 						Position position = positionsQueue.take();
 
-						// 不存在则添加
+						// 职位不存在则添加
 						if (dao.getPosition(position.getPositionId()) == null) {
 							dao.addPosition(position);
 							session.commit();
 							synchronized (this) {
 								++count;
-								System.out.println(city + keyword + "的第" + count + "个职位信息添加成功!");
+								System.out.println(city + keyword + " 第" + count + "个职位信息添加成功!");
 							}
 						} else {
 							synchronized (this) {
 								++count;
-								System.out.println(city + keyword + "的第" + count + "个职位信息添加失败：该职位信息已存在!");
+								System.out.println(city + keyword + " 第" + count + "个职位信息添加失败：该职位信息已存在!");
 							}
 						}
+						
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -111,7 +114,7 @@ public class PositionSpider {
 		int pageSize = 0;
 		do {
 			params.put("pn", "" + pn++);
-			String data = HttpUtil.post("http://www.lagou.com/jobs/positionAjax.json?px=default&city=" + city, params);
+			String data = HttpUtil.post("http://www.lagou.com/jobs/positionAjax.json?px=new&city=" + city, params);
 			// 数据解析
 			Gson gson = new Gson();
 			JsonResult jsonResult = gson.fromJson(data, JsonResult.class);
@@ -129,7 +132,7 @@ public class PositionSpider {
 		flag = true;
 	}
 
-	/*
+	/**
 	 * 生成session工厂
 	 */
 	private SqlSessionFactory getSessionFactory() {
@@ -137,4 +140,5 @@ public class PositionSpider {
 		InputStream is = PositionSpider.class.getClassLoader().getResourceAsStream(resource);
 		return new SqlSessionFactoryBuilder().build(is);
 	}
+
 }

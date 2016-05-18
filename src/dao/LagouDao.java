@@ -2,6 +2,7 @@ package dao;
 
 import java.util.List;
 
+import entity.Company;
 import entity.Position;
 
 public interface LagouDao {
@@ -15,5 +16,10 @@ public interface LagouDao {
 	public void updatePosition(int positionId, String positionDescription, String positionAddress);
 	
 	public void deletePosition(int positionId);
+
+	public Company getCompany(int companyId);
+	
+	public void addCompany(Company company);
+
 
 }

@@ -2,25 +2,28 @@ package entity;
 
 public class Company {
 	/** 公司id */
-	private String companyId;
+	private int companyId;
 
 	/** 公司名 */
 	private String companyName;
 
-	/** 公司规模 */
-	private String companySize;
+	/** 公司特点 */
+	private String companyFeatures;
+
+	/** 公司标签 */
+	private String companyLabels;
 
 	/** 发展阶段 */
 	private String financeStage;
-
+	
 	/** 领域 */
 	private String industryField;
 
-	public String getCompanyId() {
+	public int getCompanyId() {
 		return companyId;
 	}
 
-	public void setCompanyId(String companyId) {
+	public void setCompanyId(int companyId) {
 		this.companyId = companyId;
 	}
 
@@ -32,12 +35,20 @@ public class Company {
 		this.companyName = companyName;
 	}
 
-	public String getCompanySize() {
-		return companySize;
+	public String getCompanyFeatures() {
+		return companyFeatures;
 	}
 
-	public void setCompanySize(String companySize) {
-		this.companySize = companySize;
+	public void setCompanyFeatures(String companyFeatures) {
+		this.companyFeatures = companyFeatures;
+	}
+
+	public String getCompanyLabels() {
+		return companyLabels;
+	}
+
+	public void setCompanyLabels(String companyLabels) {
+		this.companyLabels = companyLabels;
 	}
 
 	public String getFinanceStage() {

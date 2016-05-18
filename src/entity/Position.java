@@ -8,11 +8,17 @@ public class Position {
 	/** 职位名称 */
 	private String positionName;
 
+	/** 职位类型 */
+	private String positionType;
+
 	/** 职位诱惑 */
 	private String positionAdvantage;
 
 	/** 城市 */
 	private String city;
+
+	/** 行政区 */
+	private String district;
 
 	/** 公司id */
 	private int companyId;
@@ -51,6 +57,14 @@ public class Position {
 		this.positionName = positionName;
 	}
 
+	public String getPositionType() {
+		return positionType;
+	}
+
+	public void setPositionType(String positionType) {
+		this.positionType = positionType;
+	}
+
 	public String getPositionAdvantage() {
 		return positionAdvantage;
 	}
@@ -65,6 +79,14 @@ public class Position {
 
 	public void setCity(String city) {
 		this.city = city;
+	}
+
+	public String getDistrict() {
+		return district;
+	}
+
+	public void setDistrict(String district) {
+		this.district = district;
 	}
 
 	public int getCompanyId() {

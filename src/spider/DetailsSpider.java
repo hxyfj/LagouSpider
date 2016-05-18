@@ -30,9 +30,6 @@ public class DetailsSpider {
 	public static void main(String[] args) {
 		// 创建爬虫
 		new DetailsSpider();
-//		String html = HttpUtil.get("http://www.lagou.com/jobs/1480367.html");
-//		System.out.println(html);
-
 	}
 
 	public DetailsSpider() {
@@ -109,7 +106,7 @@ public class DetailsSpider {
 
 	}
 
-	/*
+	/**
 	 * 生成session工厂
 	 */
 	private SqlSessionFactory getSessionFactory() {
