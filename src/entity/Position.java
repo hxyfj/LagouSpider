@@ -2,8 +2,6 @@ package entity;
 
 public class Position {
 
-	private int id;
-
 	/** 职位id */
 	private int positionId;
 
@@ -36,14 +34,6 @@ public class Position {
 
 	/** 进一步抓取内容：工作地址 */
 	private String positionAddress;
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
 
 	public int getPositionId() {
 		return positionId;

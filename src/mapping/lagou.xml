@@ -6,12 +6,12 @@
 
 	<select id="getPosition" parameterType="int" resultType="Position">
 		select *
-		from lagou_position where positionId = #{positionId}
+		from position where positionId = #{positionId}
 	</select>
 
 	<insert id="addPosition" parameterType="Position">
 		insert into
-		lagou_position(positionId,positionName,positionAdvantage,city,companyId,education,jobNature,salary,workYear)
+		lagou.position(positionId,positionName,positionAdvantage,city,companyId,education,jobNature,salary,workYear)
 		values(#{positionId},#{positionName},#{positionAdvantage},#{city},#{companyId},#{education},#{jobNature},#{salary},#{workYear})
 	</insert>
 
@@ -22,14 +22,19 @@
 	<select id="getPositionIds" resultMap="resultListId">
 		select positionId
 		from
-		lagou_position where positionDescription is null or positionAddress is null
+		position where positionDescription is null or positionAddress is null
 	</select>
 
 	<update id="updatePosition">
-		update lagou_position set
+		update position set
 		positionDescription=#{1} ,
 		positionAddress = #{2} where positionId=#{0}
 	</update>
-
+	
+	<delete id="deletePosition"  parameterType="int">
+		delete from position
+		where
+		positionId = #{positionId}
+	</delete>
 
 </mapper>

@@ -20,13 +20,19 @@ import util.HttpUtil;
  */
 public class DetailsSpider {
 
-	private ExecutorService executorService = Executors.newFixedThreadPool(10);
+	// 线程数
+	private static final int NTHREADS = 10;
+
+	private ExecutorService executorService = Executors.newFixedThreadPool(NTHREADS);
 
 	List<Integer> positionIds;
 
 	public static void main(String[] args) {
 		// 创建爬虫
 		new DetailsSpider();
+//		String html = HttpUtil.get("http://www.lagou.com/jobs/1480367.html");
+//		System.out.println(html);
+
 	}
 
 	public DetailsSpider() {
@@ -54,19 +60,19 @@ public class DetailsSpider {
 						} else {
 							positionId = positionIds.remove(0);
 						}
-						System.out.println("职位id为" + positionId + "的信息更新成功!——剩余约" + (size - 1) + "个职位待更新");
+						System.out.println("职位id为" + positionId + "的信息即将开始更新!——目前剩余" + (size - 1) + "个未更新的职位");
 					}
 					getDetails(positionId, session, dao);
 				}
 			}
 		};
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < NTHREADS; i++) {
 			executorService.execute(runnable);
 		}
 		executorService.shutdown();
-		while (!executorService.isTerminated()) {  
-		}  
-		System.out.println("拉勾爬虫工作结束");  
+		while (!executorService.isTerminated()) {
+		}
+		System.out.println("拉勾爬虫工作结束");
 	}
 
 	private void getPositionIds() {
@@ -74,6 +80,9 @@ public class DetailsSpider {
 		try {
 			LagouDao dao = session.getMapper(LagouDao.class);
 			positionIds = dao.getPositionIds();
+			if (positionIds.size() == 0) {
+				System.out.println("职位信息已经全部补全完毕");
+			}
 		} finally {
 			session.close();
 		}
@@ -82,14 +91,22 @@ public class DetailsSpider {
 	private void getDetails(int positionId, SqlSession session, LagouDao dao) {
 		String url = "http://www.lagou.com/jobs/" + positionId + ".html";
 		String html = HttpUtil.get(url);
-		Document doc = Jsoup.parse(html);
-		Element descLink = doc.select("dd.job_bt").first();
-		String positionDescription = descLink.text();
-		Element addrLink = doc.select("dl.job_company > dd > div").first();
-		String positionAddress = addrLink.text();
+		// 对应职位存在
+		if (html != null) {
+			Document doc = Jsoup.parse(html);
+			Element descLink = doc.select("dd.job_bt").first();
+			String positionDescription = descLink.text();
+			Element addrLink = doc.select("dl.job_company > dd > div").first();
+			String positionAddress = addrLink.text();
 
-		dao.updatePosition(positionId, positionDescription, positionAddress);
+			dao.updatePosition(positionId, positionDescription, positionAddress);
+		} else { // 对应职位信息已被删除
+			// 删除数据库中对应的信息
+			dao.deletePosition(positionId);
+			System.out.println("id为" + positionId + "的职位信息不存在");
+		}
 		session.commit();
+
 	}
 
 	/*

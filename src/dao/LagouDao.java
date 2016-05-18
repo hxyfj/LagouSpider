@@ -13,5 +13,7 @@ public interface LagouDao {
 	public List<Integer> getPositionIds();
 	
 	public void updatePosition(int positionId, String positionDescription, String positionAddress);
+	
+	public void deletePosition(int positionId);
 
 }
