@@ -25,9 +25,9 @@ import util.HttpUtil;
  */
 public class AddressSpider {
 
-	private String city = "杭州";
+	private String city = "北京";
 
-	private String keyword = "Java";
+	private String keyword = "数据挖掘";
 
 	private HashMap<String, Integer> map = new HashMap<>();
 
@@ -106,9 +106,9 @@ public class AddressSpider {
 		Map<String, String> params = new HashMap<>();
 		params.put("first", "true");
 		params.put("pn", "1");
-		params.put("kd", keyword);
+		params.put("kd", HttpUtil.parseStr(keyword));
 
-		String data = HttpUtil.post("http://www.lagou.com/jobs/positionAjax.json?" + "px=default&city=" + city + "&district=" + district + "&bizArea=" + bizArea
+		String data = HttpUtil.post("http://www.lagou.com/jobs/positionAjax.json?px=default&" + "city=" + city + "&district=" + district + "&bizArea=" + bizArea
 				+ "&needAddtionalResult=false", params);
 		// 数据解析
 		Gson gson = new Gson();

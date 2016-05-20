@@ -44,8 +44,8 @@
 	
 	<insert id="addCompany" parameterType="Company">
 		insert into
-		company(companyId,companyName,companyFeatures,companyLabels,financeStage,industryField)
-		values(#{companyId},#{companyName},#{companyFeatures},#{companyLabels},,#{financeStage},#{industryField})
+		lagou.company(companyId,companyName,companyFeatures,companyLabels,financeStage,industryField)
+		values(#{companyId},#{companyName},#{companyFeatures},#{companyLabels},#{financeStage},#{industryField})
 	</insert>
 
 </mapper>

@@ -8,10 +8,15 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import com.google.gson.Gson;
 
@@ -22,7 +27,7 @@ import entity.PositionResult;
 import util.HttpUtil;
 
 /**
- * 抓取搜索列表中的职位信息
+ * 抓取职位信息
  */
 public class PositionSpider {
 
@@ -42,16 +47,16 @@ public class PositionSpider {
 
 	public static void main(String[] args) {
 		// 创建爬虫
-		// 参数为空就是不限的意思
-		new PositionSpider("", "");
-//		new PositionSpider("杭州", "Java");
+		// 因为拉勾网最多只返回5000条信息，因此要根据关键字并按城市下面的行政区进行分类爬取,以便汇总
+//		new PositionSpider("北京", "php");
+		// 不设置参数
 	}
 
 	public PositionSpider(String city, String keyword) {
 		this.city = city;
 		this.keyword = keyword;
 
-		System.out.println("-------------针对" + city + keyword + "的拉勾爬虫开始工作-------------");
+		System.out.println("-------------" + city + keyword + "拉勾爬虫开始工作-------------");
 		// 不断从队列中读取职位信息保存到数据库当中
 		savePositions();
 		// 抓取职位信息保存到队列当中
@@ -60,7 +65,7 @@ public class PositionSpider {
 		executorService.shutdown();
 		while (!executorService.isTerminated()) {
 		}
-		System.out.println("-------------针对" + city + keyword + "的拉勾爬虫工作结束-------------");
+		System.out.println("-------------" + city + keyword + "拉勾爬虫工作结束-------------");
 	}
 
 	private void savePositions() {
@@ -76,8 +81,10 @@ public class PositionSpider {
 						if (positionsQueue.size() == 0 && flag) {
 							break;
 						}
-						Position position = positionsQueue.take();
-
+						Position position = positionsQueue.poll(2, TimeUnit.SECONDS);
+						if (position == null) {
+							continue;
+						}
 						// 职位不存在则添加
 						if (dao.getPosition(position.getPositionId()) == null) {
 							dao.addPosition(position);
@@ -92,7 +99,7 @@ public class PositionSpider {
 								System.out.println(city + keyword + " 第" + count + "个职位信息添加失败：该职位信息已存在!");
 							}
 						}
-						
+
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -105,16 +112,35 @@ public class PositionSpider {
 	}
 
 	private void getPositions() {
+		// 获取该城市下的行政区
+		String url = "http://www.lagou.com/jobs/list_Java?px=default&city=" + city + "#filterBox";
+		String html = HttpUtil.get(url);
+		Document doc = Jsoup.parse(html);
+		Elements links = doc.select("li.detail-district-area > a");
+		for (Element link : links) {
+			String district = link.text();
+			// 获取行政区下的职位
+			if (!district.equals("不限")) {
+				getPositionsInDistrict(district);
+			}
+		}
+		// 抓取完毕
+		flag = true;
+	}
+
+	private void getPositionsInDistrict(String district) {
 		Map<String, String> params = new HashMap<>();
 		params.put("first", "true");
-		params.put("kd", keyword);
+		params.put("kd", HttpUtil.parseStr(keyword));
 		// 页码
 		int pn = 1;
 		// 当前页含有的职位数目
 		int pageSize = 0;
 		do {
 			params.put("pn", "" + pn++);
-			String data = HttpUtil.post("http://www.lagou.com/jobs/positionAjax.json?px=new&city=" + city, params);
+			String data = HttpUtil.post(
+					"http://www.lagou.com/jobs/positionAjax.json?px=new&city=" + city + "&district=" + district,
+					params);
 			// 数据解析
 			Gson gson = new Gson();
 			JsonResult jsonResult = gson.fromJson(data, JsonResult.class);
@@ -128,8 +154,6 @@ public class PositionSpider {
 				positionsQueue.add(positions.get(i));
 			}
 		} while (pageSize == 15);
-		// 抓取完毕
-		flag = true;
 	}
 
 	/**

@@ -170,5 +170,20 @@ public class HttpUtil {
 		}
 		return params.substring(0, params.length() - 1);
 	}
+	
+	/**
+	 * 转义成&#xhhhh;形式
+	 * 
+	 * @param strInput
+	 * @return result
+	 */
+	public static String parseStr(String strInput) {
+        StringBuffer strOutput = new StringBuffer();
+        for (int i = 0; i < strInput.length(); i++)
+        {
+        	strOutput.append("&#x" +Integer.toString(strInput.charAt(i), 16));
+        }        
+        return strOutput.toString();
+	}
 
 }

@@ -15,7 +15,7 @@ public class Company {
 
 	/** 发展阶段 */
 	private String financeStage;
-	
+
 	/** 领域 */
 	private String industryField;
 
@@ -65,6 +65,13 @@ public class Company {
 
 	public void setIndustryField(String industryField) {
 		this.industryField = industryField;
+	}
+
+	@Override
+	public String toString() {
+		return "companyId:" + companyId + ",companyName:" + companyName + ",companyFeatures:" + companyFeatures
+				+ ",companyLabels:" + companyLabels + ",financeStage:" + financeStage + ",industryField:"
+				+ industryField;
 	}
 
 }
