@@ -11,8 +11,8 @@
 
 	<insert id="addPosition" parameterType="Position">
 		insert into
-		lagou.position(positionId,positionName,positionType,positionAdvantage,city,district,companyId,education,jobNature,salary,workYear)
-		values(#{positionId},#{positionName},#{positionType},#{positionAdvantage},#{city},#{district},#{companyId},#{education},#{jobNature},#{salary},#{workYear})
+		lagou.position(positionId,positionName,positionType,positionAdvantage,city,district,companyId,education,jobNature,salaryMin,salaryMax,workYear)
+		values(#{positionId},#{positionName},#{positionType},#{positionAdvantage},#{city},#{district},#{companyId},#{education},#{jobNature},#{salaryMin},#{salaryMax},#{workYear})
 	</insert>
 
 	<resultMap type="Integer" id="resultListId">

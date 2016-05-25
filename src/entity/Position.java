@@ -31,6 +31,12 @@ public class Position {
 
 	/** 工资范围 */
 	private String salary;
+	
+	/** 工资范围解析后得到最低工资 */
+	private int salaryMin;
+	
+	/** 工资范围解析后得到最高工资 */
+	private int salaryMax;
 
 	/** 工作经验 */
 	private String workYear;
@@ -119,6 +125,22 @@ public class Position {
 
 	public void setSalary(String salary) {
 		this.salary = salary;
+	}
+
+	public int getSalaryMin() {
+		return salaryMin;
+	}
+
+	public void setSalaryMin(int salaryMin) {
+		this.salaryMin = salaryMin;
+	}
+
+	public int getSalaryMax() {
+		return salaryMax;
+	}
+
+	public void setSalaryMax(int salaryMax) {
+		this.salaryMax = salaryMax;
 	}
 
 	public String getWorkYear() {

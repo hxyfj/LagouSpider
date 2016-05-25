@@ -10,6 +10,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -54,9 +56,9 @@ public class PositionSpider {
 	public static void main(String[] args) {
 		// 创建爬虫
 		// 因为拉勾网最多只返回5000条信息，因此要根据关键字并按城市下面的行政区进行分类爬取,以便汇总
-		// new PositionSpider("北京", "java");
+		 new PositionSpider("北京", "java");
 		// 不设置参数爬取所有信息
-		new PositionSpider();
+//		new PositionSpider();
 	}
 
 	/**
@@ -205,9 +207,33 @@ public class PositionSpider {
 			List<Position> positions = positionResult.getResult();
 			// 将职位信息添加到队列当中
 			for (int i = 0; i < positions.size(); i++) {
+				// 解析工资范围
+				regrexSalary(positions.get(i));
+				// 添加到队列
 				positionsQueue.add(positions.get(i));
 			}
 		} while (pageSize == 15);
+	}
+	
+	/**
+	 * 通过正则表达式解析得到最高工资和最低工资
+	 */
+	private void regrexSalary(Position position){
+		String salary = position.getSalary();
+		Pattern pattern = null;
+
+		if (salary.indexOf("以上") != -1) {
+			pattern = Pattern.compile("([0-9]+)k()");
+		} else if (salary.indexOf("以下") != -1) {
+			pattern = Pattern.compile("()([0-9]+)k");
+		} else {
+			pattern = Pattern.compile("([0-9]+)k-([0-9]+)k");
+		}		
+		Matcher matcher = pattern.matcher(salary);
+		if(matcher.find()){
+			position.setSalaryMin(Integer.parseInt(matcher.group(1)));
+			position.setSalaryMax(Integer.parseInt(matcher.group(2)));
+		}
 	}
 
 	/**
