@@ -14,9 +14,9 @@
 [点击查看分析报告](http://www.codinghx.com/lagou/report.html)
 
 ## 使用方法
-下载本项目到本地，并通过项目的sql文件创建MySQL表，然后运行相应的爬虫即可。
+下载本项目到本地，并通过项目的sql文件创建MySQL表，修改conf.xml的数据库连接信息，然后运行相应的爬虫即可。
 
-* PositionSpider.java --- 抓取全国40多个城市的所有技术类岗位
+* PositionSpider.java --- 抓取全国40多个城市的所有技术类岗位(main函数中，PositionSpider实例根据传入参数，爬取相应结果)
 * AddressSpider.java --- 抓取指定城市下某个岗位在各行政区/商区的招聘数量并排序 
 * CompanySpider.java --- 抓取全国的互联网公司信息（未完成）
 * DetailsSpider.java --- 完善PositionSpider抓取的岗位信息，补充职位描述和职位详细地点等信息。	
