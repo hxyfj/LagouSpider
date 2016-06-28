@@ -55,9 +55,9 @@ public class PositionSpider {
 
 	public static void main(String[] args) {
 		// 创建爬虫
-		// 因为拉勾网最多只返回5000条信息，因此要根据关键字并按城市下面的行政区进行分类爬取,以便汇总
-		 new PositionSpider("北京", "java");
-		// 不设置参数爬取所有信息
+		// 设置城市以及关键字爬取指定信息
+		new PositionSpider("杭州", "java");
+		// 不设置参数爬取所有信息(因为拉勾网最多只返回5000条信息，因此实现方式是根据关键字并按城市下面的行政区进行分类爬取,然后汇总)
 //		new PositionSpider();
 	}
 
@@ -220,20 +220,31 @@ public class PositionSpider {
 	 */
 	private void regrexSalary(Position position){
 		String salary = position.getSalary();
-		Pattern pattern = null;
 
+		// 薪资10k以上就把薪资上下限都设置为10k
 		if (salary.indexOf("以上") != -1) {
-			pattern = Pattern.compile("([0-9]+)k()");
-		} else if (salary.indexOf("以下") != -1) {
-			pattern = Pattern.compile("()([0-9]+)k");
+			Pattern pattern = Pattern.compile("([0-9]+)k");
+			Matcher matcher = pattern.matcher(salary);	
+			if(matcher.find()){
+				position.setSalaryMin(Integer.parseInt(matcher.group(1)));
+				position.setSalaryMax(Integer.parseInt(matcher.group(1)));
+			}
+		} else if (salary.indexOf("以下") != -1) { // 薪资10k以下就把薪资下限都设置为0
+			Pattern pattern = Pattern.compile("([0-9]+)k");
+			Matcher matcher = pattern.matcher(salary);	
+			if(matcher.find()){
+				position.setSalaryMin(0);
+				position.setSalaryMax(Integer.parseInt(matcher.group(1)));
+			}
 		} else {
-			pattern = Pattern.compile("([0-9]+)k-([0-9]+)k");
+			Pattern pattern = Pattern.compile("([0-9]+)k-([0-9]+)k");
+			Matcher matcher = pattern.matcher(salary);
+			if(matcher.find()){
+				position.setSalaryMin(Integer.parseInt(matcher.group(1)));
+				position.setSalaryMax(Integer.parseInt(matcher.group(2)));
+			}
 		}		
-		Matcher matcher = pattern.matcher(salary);
-		if(matcher.find()){
-			position.setSalaryMin(Integer.parseInt(matcher.group(1)));
-			position.setSalaryMax(Integer.parseInt(matcher.group(2)));
-		}
+
 	}
 
 	/**

@@ -92,11 +92,13 @@ public class DetailsSpider {
 		if (html != null) {
 			Document doc = Jsoup.parse(html);
 			Element descLink = doc.select("dd.job_bt").first();
-			String positionDescription = descLink.text();
 			Element addrLink = doc.select("dl.job_company > dd > div").first();
-			String positionAddress = addrLink.text();
-
-			dao.updatePosition(positionId, positionDescription, positionAddress);
+			// 防止空指针异常
+			if (descLink != null && addrLink != null) {
+				String positionDescription = descLink.text();
+				String positionAddress = addrLink.text();
+				dao.updatePosition(positionId, positionDescription, positionAddress);
+			}
 		} else { // 对应职位信息已被删除
 			// 删除数据库中对应的信息
 			dao.deletePosition(positionId);
