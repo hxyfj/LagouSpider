@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dao.LagouDao">
+
+	<select id="getPosition" parameterType="int" resultType="Position">
+		select *
+		from position where positionId = #{positionId}
+	</select>
+
+	<insert id="addPosition" parameterType="Position">
+		insert into
+		lagou.position(positionId,positionName,positionType,positionAdvantage,city,district,companyId,education,jobNature,salaryMin,salaryMax,workYear)
+		values(#{positionId},#{positionName},#{positionType},#{positionAdvantage},#{city},#{district},#{companyId},#{education},#{jobNature},#{salaryMin},#{salaryMax},#{workYear})
+	</insert>
+
+	<resultMap type="Integer" id="resultListId">
+		<id column="positionId" property="positionId" />
+	</resultMap>
+
+	<select id="getPositionIds" resultMap="resultListId">
+		select positionId
+		from
+		position where positionDescription is null or positionAddress is null
+	</select>
+
+	<update id="updatePosition">
+		update position set
+		positionDescription=#{1} ,
+		positionAddress = #{2} where positionId=#{0}
+	</update>
+
+	<delete id="deletePosition" parameterType="int">
+		delete from position
+		where
+		positionId = #{positionId}
+	</delete>
+
+	<select id="getCompany" parameterType="int" resultType="Company">
+		select *
+		from company where companyId = #{companyId}
+	</select>
+	
+	<insert id="addCompany" parameterType="Company">
+		insert into
+		lagou.company(companyId,companyName,companyFeatures,companyLabels,financeStage,industryField)
+		values(#{companyId},#{companyName},#{companyFeatures},#{companyLabels},#{financeStage},#{industryField})
+	</insert>
+
+</mapper>
